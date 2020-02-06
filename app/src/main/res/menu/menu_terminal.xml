@@ -5,6 +5,12 @@
     tools:ignore="AlwaysShowAction">
 
     <item
+        android:id="@+id/reconnect"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="@string/chat_clear"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/clear"
         android:icon="@android:drawable/ic_menu_delete"
         android:title="@string/chat_clear"

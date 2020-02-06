@@ -53,6 +53,10 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     private MessageAdapter messageAdapter;
     private ListView messagesView;
 
+    private EditText sendText;
+
+    private Menu thisMenu;
+
     /*
      * Lifecycle
      */
@@ -135,7 +139,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_terminal, container, false);
-        TextView sendText = view.findViewById(R.id.send_text);
+        sendText = view.findViewById(R.id.send_text);
         View sendBtn = view.findViewById(R.id.send_btn);
         sendBtn.setOnClickListener(v -> send(sendText.getText().toString()));
         messageAdapter = new MessageAdapter(getContext());
@@ -147,6 +151,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
+        thisMenu = menu;
         inflater.inflate(R.menu.menu_terminal, menu);
     }
 
@@ -172,18 +177,18 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                 input.setHint(getString(R.string.chat_username_hint));
                 alert.setView(input);
 
-                alert.setPositiveButton("Ok", (dialog, whichButton) -> {
+                alert.setPositiveButton(getString(android.R.string.ok), (dialog, whichButton) -> {
                     userName = input.getText().toString();
                     // TODO save the username
                     mPrefs.edit().putString("userName", userName).commit();
                 });
 
-                alert.setNegativeButton("Delete", (dialog, whichButton) -> {
+                alert.setNegativeButton(getString(R.string.string_delete), (dialog, whichButton) -> {
                     mPrefs.edit().remove("userName").commit();
                     userName = null;
                 });
 
-                alert.setNeutralButton("Cancel", (dialog, whichButton) -> {
+                alert.setNeutralButton(getString(android.R.string.cancel), (dialog, whichButton) -> {
                     // Canceled.
                 });
                 alert.show();
@@ -194,10 +199,13 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                 aboutAlert.setTitle(getString(R.string.menu_about));
                 aboutAlert.setMessage(getString(R.string.about_text));
 
-                aboutAlert.setPositiveButton("Ok", (dialog, whichButton) -> {
+                aboutAlert.setPositiveButton(getString(android.R.string.ok), (dialog, whichButton) -> {
                     // Canceled.
                 });
                 aboutAlert.show();
+                return true;
+            case R.id.reconnect:
+                connect();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -250,6 +258,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
                 byte[] data = toBeSent.getBytes();
                 socket.write(data);
+                sendText.getText().clear();
             }
         } catch (Exception e) {
             onSerialIoError(e);
@@ -319,12 +328,14 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         if (userName != null) {
             send("~" + userName + " " + getString(R.string.chat_joined));
         }
+        thisMenu.findItem(R.id.reconnect).setVisible(false);
     }
 
     @Override
     public void onSerialConnectError(Exception e) {
         showToast(getString(R.string.chat_connection_failed), true);
         disconnect();
+        thisMenu.findItem(R.id.reconnect).setVisible(true);
     }
 
     @Override
@@ -336,6 +347,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     public void onSerialIoError(Exception e) {
         showToast(getString(R.string.chat_connection_error), true);
         disconnect();
+        thisMenu.findItem(R.id.reconnect).setVisible(true);
     }
 
 }

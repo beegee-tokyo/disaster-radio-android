@@ -35,4 +35,6 @@
     <string name="settings_username_title">Username</string>
     <string name="chat_username_hint">Enter your username</string>
 
+    <string name="string_delete">Delete</string>
+
 </resources>
