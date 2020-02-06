@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="AlwaysShowAction">
+
+    <item
+        android:id="@+id/clear"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:title="@string/chat_clear"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/setup"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="@string/settings_username_title" />
+
+    <item
+        android:id="@+id/chat_about"
+        android:title="@string/menu_about" />
+</menu>

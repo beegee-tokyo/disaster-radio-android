@@ -1,2 +1,23 @@
-# disaster-radio-android
-Chat application to be used with 
+# Chat application for DisasterRadio
+
+disaster.radio    
+a resilient communications network.    
+
+This app connects over BLE to a nearby LoRa node that runs the DisasterRadio SW.    
+disaster.radio is a collaborative project between Sudo Mesh and Secure Scuttlebutt, with additional support from the Internet Society and Institute For the Future    
+Except where otherwise noted, content on this site is licensed under a GNU General Public License v3 license.
+
+## Credits
+The sources are based on Kai Morich [SimpleBluetoothLeTerminal](https://github.com/kai-morich/SimpleBluetoothLeTerminal)    
+Thank you Kai for making his very well working code public domain.    
+_**REMARK**_: Kai published his code under MIT license. 
+
+The design of the chat box is taken from the Android Chat Tutorial of [scaledrone](https://www.scaledrone.com/blog/android-chat-tutorial/)    
+Thank you scaledrone for writing this nice tutorial
+
+## Build the app
+The source code is using AndroidX framework. Minimum SDK version is 19 (KitKat), so it will not work on older phones. But that should not be a problem, as BLE is only supported on newer phones.    
+The code was made using Android Studio Version 3.5.3
+
+## License
+To match with the licenses used in the disaster.radio project, this source code is licensed under the GNU GENERAL PUBLIC LICENSE Version 3

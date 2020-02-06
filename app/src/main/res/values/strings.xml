@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">DisasterRadio</string>
+    <string name="devices">DisasterRadio Nodes</string>
+
+    <string name="location_permission_title">Location permission required</string>
+    <string name="location_permission_message">This app does not use location information, but scanning for Bluetooth LE devices requires this permission</string>
+
+    <string name="location_denied_title">Location permission denied</string>
+    <string name="location_denied_message">As location permission has not been granted, this app cannot scan for Bluetooth LE devices.</string>
+    <string name="pairing_request">PAIRING requested\n-> Perform pairing steps. Connect again</string>
+
+    <string name="default_rcvd_name">DisasterRadio</string>
+    <string name="menu_about">About</string>
+    <string name="about_text">disaster.radio\n\na resilient communications network.\n\n
+    This app connects over BLE to a nearby LoRa node that runs the DisasterRadio SW.\n\n
+    disaster.radio is a collaborative project between Sudo Mesh and Secure Scuttlebutt, with additional support from the Internet Society and Institute For the Future\n\n
+    Except where otherwise noted, content on this site is licensed under a GNU General Public License v3 license.</string>
+
+    <string name="devices_scan">SCAN</string>
+    <string name="devices_stop_scan">STOP</string>
+    <string name="devices_bt_settings">Bluetooth settings</string>
+    <string name="devices_no_name">-unnamed-</string>
+
+    <string name="chat_joined">joined the channel</string>
+    <string name="chat_leave">left the channel</string>
+
+    <string name="chat_connected">Connected</string>
+    <string name="chat_disconnected">Not connected</string>
+    <string name="chat_connection_failed">Connection failed</string>
+    <string name="chat_connection_error">Lost connection</string>
+    <string name="chat_send_hint">Enter your message here</string>
+
+    <string name="chat_settings">Settings</string>
+    <string name="chat_clear">Clear</string>
+    <string name="settings_username_title">Username</string>
+    <string name="chat_username_hint">Enter your username</string>
+
+</resources>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="AlwaysShowAction">
+
+    <item
+        android:id="@+id/ble_scan"
+        android:title="@string/devices_scan"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/ble_scan_stop"
+        android:title="@string/devices_stop_scan"
+        app:showAsAction="always"
+        android:visible="false" />
+
+    <item
+        android:id="@+id/bt_settings"
+        android:title="@string/devices_bt_settings" />
+
+    <item
+        android:id="@+id/dev_about"
+        android:title="@string/menu_about" />
+</menu>
