@@ -25,9 +25,9 @@ To match with the licenses used in the disaster.radio project, this source code 
 ## Images
 | Scan screen | Scan screen menu |    
 | :----: | :----: | 
-| ![alt text](../documents/1_device_list.png "Scan screen") | ![alt text](../documents/2_device_list_menu.png "Scan screen menu") |    
+| ![alt text](./documents/1_device_list.png "Scan screen") | ![alt text](./documents/2_device_list_menu.png "Scan screen menu") |    
 | **About** | **Chat room** |    
-| ![alt text](../documents/3_device_list_about.png "Application about") | ![alt text](../documents/4_chat_room.png "Chat room with messages") |    
+| ![alt text](./documents/3_device_list_about.png "Application about") | ![alt text](./documents/4_chat_room.png "Chat room with messages") |    
 | **Chat room menu** | **Setup username** |    
-| ![alt text](../documents/5_chat_room_menu.png "Chat room menu") | ![alt text](../documents/6_chat_room_set_user.png "Set username") |    
+| ![alt text](./documents/5_chat_room_menu.png "Chat room menu") | ![alt text](./documents/6_chat_room_set_user.png "Set username") |    
  
