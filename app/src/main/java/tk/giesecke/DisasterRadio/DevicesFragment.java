@@ -267,7 +267,7 @@ public class DevicesFragment extends ListFragment {
 		if (scanState == ScanState.NONE)
 			return;
 		if (listItems.indexOf(device) < 0) {
-			if (device.getName().startsWith("DR-")) {
+			if ((device.getName() != null) && (device.getName().startsWith("DR-"))) {
 				listItems.add(device);
 				Collections.sort(listItems, DevicesFragment::compareTo);
 				listAdapter.notifyDataSetChanged();

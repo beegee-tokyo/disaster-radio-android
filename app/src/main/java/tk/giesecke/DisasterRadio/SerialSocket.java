@@ -59,7 +59,7 @@ class SerialSocket extends BluetoothGattCallback {
     private static final UUID BLUETOOTH_LE_TIO_CHAR_RX_CREDITS  = UUID.fromString("00000004-0000-1000-8000-008025000000"); // I
 
     private static final int MAX_MTU = 512; // BLE standard does not limit, some BLE 4.2 devices support 251, various source say that Android has max 512
-    private static final int DEFAULT_MTU = 23;
+    private static final int DEFAULT_MTU = 260;
     private static final String TAG = "SerialSocket";
 
     private final ArrayList<byte[]> writeBuffer;

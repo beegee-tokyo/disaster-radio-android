@@ -285,17 +285,17 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             messageAdapter.add(message);
             // scroll the ListView to the last added element
             messagesView.setSelection(messagesView.getCount() - 1);
-            Log.d(TAG, "Received: " + rcvd);
+//            Log.d(TAG, "Received: " + rcvd);
         } else {
             // We got a routing table
             int size = rcvdBytes.length;
-            Log.d(TAG, "Received binary data with length " + size);
+//            Log.d(TAG, "Received binary data with length " + size);
 
-            String resultString = "";
-            for (byte output : rcvdBytes) {
-                resultString += String.format("%02X ", output);
-            }
-            Log.d(TAG, resultString);
+//            String resultString = "";
+//            for (byte output : rcvdBytes) {
+//                resultString += String.format("%02X ", output);
+//            }
+//            Log.d(TAG, resultString);
         }
     }
 

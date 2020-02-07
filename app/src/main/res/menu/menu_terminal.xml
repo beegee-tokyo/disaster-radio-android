@@ -6,7 +6,7 @@
 
     <item
         android:id="@+id/reconnect"
-        android:icon="@android:drawable/ic_menu_info_details"
+        android:icon="@drawable/ic_menu_noconn"
         android:title="@string/chat_clear"
         app:showAsAction="always" />
 
