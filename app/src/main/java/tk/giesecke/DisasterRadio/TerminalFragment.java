@@ -273,21 +273,30 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             // We got a chat message
             rcvd = rcvd.substring(4);
             String sender = getString(R.string.default_rcvd_name);
+            boolean myHistory = false;
             if (rcvd.substring(0, 1).equalsIgnoreCase("<")) {
                 // Message has a sender name
                 int lastIndex = rcvd.indexOf(">");
                 if (lastIndex > 1) {
                     sender = rcvd.substring(1, lastIndex);
                     rcvd = rcvd.substring(lastIndex + 1);
+                    if (sender.equalsIgnoreCase(userName)) {
+                        myHistory = true;
+                    }
                 }
+            } else if (rcvd.substring(0,1).equalsIgnoreCase("~")) {
+                // user joined message, how to handle it
+                showToast(rcvd.substring(1), false);
+                return;
             }
-            final Message message = new Message(rcvd, sender, false);
+            final Message message = new Message(rcvd, sender, myHistory);
             messageAdapter.add(message);
             // scroll the ListView to the last added element
             messagesView.setSelection(messagesView.getCount() - 1);
 //            Log.d(TAG, "Received: " + rcvd);
         } else {
             // We got a routing table
+            // TODO routing table is invalid because of String message. Needs to be fixed in ESP code
             int size = rcvdBytes.length;
 //            Log.d(TAG, "Received binary data with length " + size);
 
