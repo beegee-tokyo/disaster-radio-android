@@ -10,6 +10,7 @@ android {
         applicationId 'tk.giesecke.disaster_radio'
         versionCode 1
         versionName "1.0"
+        project.ext.set("archivesBaseName", "tk.giesecke.disaster_radio-V_" + defaultConfig.versionName)
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
