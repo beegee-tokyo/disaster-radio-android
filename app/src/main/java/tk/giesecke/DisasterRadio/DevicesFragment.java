@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.ListFragment;
 
+import android.text.util.Linkify;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -188,7 +189,12 @@ public class DevicesFragment extends ListFragment {
 				aboutAlert.setPositiveButton("Ok", (dialog, whichButton) -> {
 					// Canceled.
 				});
-				aboutAlert.show();
+				androidx.appcompat.app.AlertDialog aboutDialog = aboutAlert.create();
+				aboutDialog.show();
+
+				TextView alertTextView = aboutDialog.findViewById(android.R.id.message);
+				Linkify.addLinks(alertTextView, Linkify.WEB_URLS);
+//				aboutAlert.show();
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);

@@ -8,8 +8,8 @@ android {
         vectorDrawables.useSupportLibrary true
 
         applicationId 'tk.giesecke.disaster_radio'
-        versionCode 1
-        versionName "1.0"
+        versionCode 11
+        versionName '1.1'
         project.ext.set("archivesBaseName", "tk.giesecke.disaster_radio-V_" + defaultConfig.versionName)
     }
     compileOptions {
@@ -26,5 +26,5 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
 }

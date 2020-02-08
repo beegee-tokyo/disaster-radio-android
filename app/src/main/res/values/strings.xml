@@ -11,10 +11,10 @@
 
     <string name="default_rcvd_name">DisasterRadio</string>
     <string name="menu_about">About</string>
-    <string name="about_text">disaster.radio\n\na resilient communications network.\n\n
+    <string name="about_text">https://disaster.radio\n\na resilient communications network.\n\n
     This app connects over BLE to a nearby LoRa node that runs the DisasterRadio SW.\n\n
     disaster.radio is a collaborative project between Sudo Mesh and Secure Scuttlebutt, with additional support from the Internet Society and Institute For the Future\n\n
-    Except where otherwise noted, content on this site is licensed under a GNU General Public License v3 license.</string>
+    Except where otherwise noted, this source code is licensed under a GNU General Public License v3 license.</string>
 
     <string name="devices_scan">SCAN</string>
     <string name="devices_stop_scan">STOP</string>
@@ -24,7 +24,7 @@
     <string name="chat_joined">joined the channel</string>
     <string name="chat_leave">left the channel</string>
 
-    <string name="chat_connected">Connected</string>
+        <string name="chat_connected">Connected</string>
     <string name="chat_disconnected">Not connected</string>
     <string name="chat_connection_failed">Connection failed</string>
     <string name="chat_connection_error">Lost connection</string>
