@@ -17,7 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.Gravity;
@@ -32,12 +31,21 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.Objects;
 
+import tk.giesecke.DisasterRadio.msg.MemberAdapter;
+import tk.giesecke.DisasterRadio.msg.MemberData;
 import tk.giesecke.DisasterRadio.msg.Message;
 import tk.giesecke.DisasterRadio.msg.MessageAdapter;
 
 import static tk.giesecke.DisasterRadio.MainActivity.appContext;
+import static tk.giesecke.DisasterRadio.MainActivity.latDouble;
+import static tk.giesecke.DisasterRadio.MainActivity.longDouble;
 import static tk.giesecke.DisasterRadio.MainActivity.mPrefs;
 import static tk.giesecke.DisasterRadio.MainActivity.userName;
 
@@ -54,9 +62,14 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 	private boolean initialStart = true;
 	private Connected connected = Connected.False;
 
-	private MessageAdapter messageAdapter;
 	private ListView messagesView;
+	private MessageAdapter messageAdapter;
+	private MemberAdapter memberAdapter;
 
+	private static MemberData meEntry = null;
+	private MemberData noUserName;
+
+	private View fragmentView;
 	private EditText sendText;
 	private TextView activeNodes;
 	private TextView meshHops;
@@ -73,6 +86,15 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 		setHasOptionsMenu(true);
 		setRetainInstance(true);
 		deviceAddress = Objects.requireNonNull(getArguments()).getString("device");
+		messageAdapter = new MessageAdapter(getContext());
+		memberAdapter = new MemberAdapter((getContext()));
+		meEntry = new MemberData("me", "#B2EBF2");
+		if (userName != null) {
+			meEntry.setData(userName, "#B2EBF2");
+		}
+		memberAdapter.add(meEntry);
+		noUserName = new MemberData(getString(R.string.default_rcvd_name), "#F06262");
+		memberAdapter.add(noUserName);
 	}
 
 	@Override
@@ -147,21 +169,46 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 	/*
 	 * UI
 	 */
+	@SuppressLint("DefaultLocale")
 	@Override
-	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_terminal, container, false);
-		sendText = view.findViewById(R.id.send_text);
-		activeNodes = view.findViewById(R.id.active_nodes);
-		meshHops = view.findViewById(R.id.mesh_hops);
-		meshMetrics = view.findViewById(R.id.mesh_metrics);
-		activeNodes = view.findViewById(R.id.active_nodes);
-		View sendBtn = view.findViewById(R.id.send_btn);
+	public View
+	onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		fragmentView = inflater.inflate(R.layout.fragment_terminal, container, false);
+		sendText = fragmentView.findViewById(R.id.send_text);
+		activeNodes = fragmentView.findViewById(R.id.active_nodes);
+		meshHops = fragmentView.findViewById(R.id.mesh_hops);
+		meshMetrics = fragmentView.findViewById(R.id.mesh_metrics);
+		activeNodes = fragmentView.findViewById(R.id.active_nodes);
+		View sendBtn = fragmentView.findViewById(R.id.send_btn);
 		sendBtn.setOnClickListener(v -> send(sendText.getText().toString()));
 		messageAdapter = new MessageAdapter(getContext());
-		messagesView = view.findViewById(R.id.messages_view);
+		messagesView = fragmentView.findViewById(R.id.messages_view);
 		messagesView.setAdapter(messageAdapter);
 
-		return view;
+		View sendMapBtn = fragmentView.findViewById(R.id.send_map_btn);
+		sendMapBtn.setOnClickListener(v -> {
+			if (connected != Connected.True) {
+				showToast(getString(R.string.chat_disconnected), true);
+				return;
+			}
+			// TODO how does final location message look like?
+			// 04m|<user>{"pos":[48.75608,2.302038]}
+			String currentPos;
+			if (userName != null) {
+				currentPos = "04m|<" + userName;
+				currentPos += ">{\"pos\":[" +
+						String.format("%.6f", latDouble) + "," +
+						String.format("%.6f", longDouble) + "]}";
+				byte[] data = currentPos.getBytes();
+				try {
+					socket.write(data);
+				} catch (IOException e) {
+					onSerialIoError(e);
+				}
+			}
+		});
+
+		return fragmentView;
 	}
 
 	@Override
@@ -265,7 +312,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 		String toBeSent = str;
 		try {
 			if (toBeSent.length() > 0) {
-				final Message message = new Message(toBeSent, "Me", true);
+				final Message message = new Message(toBeSent, meEntry, true);
 				if (!toBeSent.startsWith("~")) {
 					messageAdapter.add(message);
 					// scroll the ListView to the last added element
@@ -289,12 +336,12 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 	@SuppressLint("DefaultLocale")
 	@SuppressWarnings("StringConcatenationInLoop")
 	private void receive(byte[] rcvdBytes) {
-
 		if (rcvdBytes[2] == 'c') {
-			String rcvd = new String(rcvdBytes);
 			// We got a chat message
+			String rcvd = new String(rcvdBytes);
 			rcvd = rcvd.substring(4);
-			String sender = getString(R.string.default_rcvd_name);
+			String sender;
+			MemberData thisUser = noUserName;
 			boolean myHistory = false;
 			if (rcvd.substring(0, 1).equalsIgnoreCase("<")) {
 				// Message has a sender name
@@ -304,6 +351,16 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 					rcvd = rcvd.substring(lastIndex + 1);
 					if (sender.equalsIgnoreCase(userName)) {
 						myHistory = true;
+						thisUser = meEntry;
+					} else {
+						// Check if we know the member already
+						int memberId = memberAdapter.hasMember(sender);
+						if (memberId != -1) {
+							thisUser = memberAdapter.getItem(memberId);
+						} else {
+							thisUser = new MemberData(sender, memberAdapter.getRandomColor());
+							memberAdapter.add(thisUser);
+						}
 					}
 				}
 			} else if (rcvd.substring(0, 1).equalsIgnoreCase("~")) {
@@ -311,18 +368,18 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 				showToast(rcvd.substring(1), false);
 				return;
 			}
-			final Message message = new Message(rcvd, sender, myHistory);
+			final Message message = new Message(rcvd, thisUser, myHistory);
 			messageAdapter.add(message);
 			// scroll the ListView to the last added element
 			messagesView.setSelection(messagesView.getCount() - 1);
 //			Log.d(TAG, "Received: " + rcvd);
-		} else if (rcvdBytes[2] == '-') {
+		} else if ((rcvdBytes[2] == -114) || (rcvdBytes[2] == '-')) {
 			// We got a routing table
 			int idx = 4;
 			int nodeNum = 0;
-			String foundActiveNode = "Active nodes\n";
-			String foundHops = "Hops\n";
-			String foundMetrics = "Metrics\n";
+			String foundActiveNode = "Location\nActive nodes\n";
+			String foundHops = "Lat: " + String.format("%.2f", latDouble) + "\nHops\n";
+			String foundMetrics = "Long: " + String.format("%.2f", longDouble) + "\nMetrics\n";
 			int numOfEntries = (rcvdBytes.length - 3) / 5;
 			for (int entry = 0; entry < numOfEntries; entry++) {
 				for (int nodeIdx = 3; nodeIdx < 6; nodeIdx++) {
@@ -341,6 +398,50 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 //                resultString += String.format("%02X ", output);
 //            }
 //            Log.d(TAG, resultString);
+		} else if (rcvdBytes[2] == 'm') {
+			// we got coordinates of a user
+			// TODO how does final location message look like?
+			// 04m|<user>{"pos":[48.75608,2.302038]}
+			String rcvd = new String(rcvdBytes);
+			// We got a map message
+			rcvd = rcvd.substring(4);
+
+			String mapSender;
+			if (rcvd.substring(0, 1).equalsIgnoreCase("<")) {
+				// Message has a sender name
+				int lastIndex = rcvd.indexOf(">");
+				if (lastIndex > 1) {
+					mapSender = rcvd.substring(1, lastIndex);
+					rcvd = rcvd.substring(lastIndex + 1);
+					JSONObject jObject;
+					try {
+						jObject = new JSONObject(rcvd);
+						JSONArray posData = jObject.getJSONArray("pos");
+						double gotLat = posData.getDouble(0);
+						double gotLong = posData.getDouble(1);
+
+						String mapMessage = mapSender + " reports location lat " + String.format("%.3f", gotLat) +
+								" long " + String.format("%.3f", gotLong);
+
+						MemberData mapSenderData;
+						int senderMemberId = memberAdapter.hasMember(mapSender);
+						if (senderMemberId == -1) {
+							mapSenderData = new MemberData(mapSender, memberAdapter.getRandomColor());
+							memberAdapter.add(mapSenderData);
+						} else {
+							mapSenderData = memberAdapter.getItem(senderMemberId);
+						}
+						final Message message = new Message(mapMessage, mapSenderData, false);
+						messageAdapter.add(message);
+						// scroll the ListView to the last added element
+						messagesView.setSelection(messagesView.getCount() - 1);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				} else {
+					Log.e(TAG, "Missing name in the map data");
+				}
+			}
 		} else {
 			int size = rcvdBytes.length;
 			Log.d(TAG, "Received binary data with length " + size);

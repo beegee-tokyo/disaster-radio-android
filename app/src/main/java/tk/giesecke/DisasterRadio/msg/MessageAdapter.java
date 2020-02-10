@@ -3,6 +3,8 @@ package tk.giesecke.DisasterRadio.msg;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,8 +70,10 @@ public class MessageAdapter extends BaseAdapter {
 			holder.messageBody = convertView.findViewById(R.id.message_body);
 			convertView.setTag(holder);
 
-			holder.name.setText(message.getMemberData());
+			holder.name.setText(message.getMemberData().getName());
 			holder.messageBody.setText(message.getText());
+			GradientDrawable drawable = (GradientDrawable) holder.messageBody.getBackground();
+			drawable.setColor(Color.parseColor(message.getColor()));
 		}
 
 		return convertView;

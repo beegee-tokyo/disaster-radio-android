@@ -27,6 +27,15 @@
         android:orientation="horizontal"
         android:layout_weight="0.1">
 
+        <ImageButton
+            android:id="@+id/send_map_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@android:drawable/btn_default"
+            android:contentDescription="@string/app_name"
+            app:srcCompat="@android:drawable/ic_menu_mapmode" />
+
         <EditText
             android:id="@+id/send_text"
             android:layout_width="0dp"
@@ -41,8 +50,11 @@
             android:id="@+id/send_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_send_white_24dp"
-            android:contentDescription="@android:string/ok" />
+            android:layout_gravity="center"
+            android:background="@android:drawable/btn_default"
+            android:contentDescription="@android:string/ok"
+            app:srcCompat="@drawable/ic_send_white_24dp" />
+
     </LinearLayout>
 
     <ScrollView
