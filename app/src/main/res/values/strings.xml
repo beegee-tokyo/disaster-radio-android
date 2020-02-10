@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DisasterRadio</string>
+    <string name="my_app_name">DisasterRadio</string>
     <string name="devices">DisasterRadio Nodes</string>
 
     <string name="location_permission_title">Location permission required</string>
@@ -24,11 +24,14 @@
     <string name="chat_joined">joined the channel</string>
     <string name="chat_leave">left the channel</string>
 
-        <string name="chat_connected">Connected</string>
+    <string name="chat_connected">Connected</string>
     <string name="chat_disconnected">Not connected</string>
     <string name="chat_connection_failed">Connection failed</string>
     <string name="chat_connection_error">Lost connection</string>
     <string name="chat_send_hint">Enter your message here</string>
+
+    <string name="access_token">pk.eyJ1IjoiYmVlZ2VlMTk2MiIsImEiOiJjazZnN3M5YWQwdWIyM2twNjZybjI3MjRxIn0.B3mcQqcXoFAtAf5AZU3KuQ</string>
+    <string name="chat_showmap">Toggle map</string>
 
     <string name="chat_settings">Settings</string>
     <string name="chat_clear">Clear</string>

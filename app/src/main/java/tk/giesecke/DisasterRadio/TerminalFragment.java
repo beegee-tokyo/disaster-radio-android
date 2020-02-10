@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -27,15 +28,33 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
+import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import tk.giesecke.DisasterRadio.msg.MemberAdapter;
@@ -43,13 +62,16 @@ import tk.giesecke.DisasterRadio.msg.MemberData;
 import tk.giesecke.DisasterRadio.msg.Message;
 import tk.giesecke.DisasterRadio.msg.MessageAdapter;
 
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
 import static tk.giesecke.DisasterRadio.MainActivity.appContext;
 import static tk.giesecke.DisasterRadio.MainActivity.latDouble;
 import static tk.giesecke.DisasterRadio.MainActivity.longDouble;
 import static tk.giesecke.DisasterRadio.MainActivity.mPrefs;
+import static tk.giesecke.DisasterRadio.MainActivity.mapVisible;
 import static tk.giesecke.DisasterRadio.MainActivity.userName;
 
-public class TerminalFragment extends Fragment implements ServiceConnection, SerialListener {
+public class TerminalFragment extends Fragment implements ServiceConnection, SerialListener, OnMapReadyCallback {
 
 	private static final String TAG = "TerminalFragment";
 
@@ -74,6 +96,12 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 	private TextView activeNodes;
 	private TextView meshHops;
 	private TextView meshMetrics;
+	private MapView mapView;
+	public static MapboxMap fragMapboxMap;
+
+	private static final String SOURCE_ID = "SOURCE_ID";
+	private static final String ICON_ID = "ICON_ID";
+	private static final String LAYER_ID = "LAYER_ID";
 
 	private Menu thisMenu;
 
@@ -108,22 +136,27 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 		}
 		Objects.requireNonNull(getActivity()).stopService(new Intent(getActivity(), SerialService.class));
 		super.onDestroy();
+		mapView.onDestroy();
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-		if (service != null)
+		if (service != null) {
 			service.attach(this);
-		else
+		} else {
 			Objects.requireNonNull(getActivity()).startService(new Intent(getActivity(), SerialService.class)); // prevents service destroy on unbind from recreated activity caused by orientation change
+		}
+		mapView.onStart();
 	}
 
 	@Override
 	public void onStop() {
-		if (service != null && !Objects.requireNonNull(getActivity()).isChangingConfigurations())
+		if (service != null && !Objects.requireNonNull(getActivity()).isChangingConfigurations()) {
 			service.detach();
+		}
 		super.onStop();
+		mapView.onStop();
 	}
 
 	@SuppressWarnings("deprecation")
@@ -150,6 +183,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 			initialStart = false;
 			Objects.requireNonNull(getActivity()).runOnUiThread(this::connect);
 		}
+		mapView.onResume();
 	}
 
 	@Override
@@ -166,14 +200,39 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 		service = null;
 	}
 
+	@Override
+	public void onPause() {
+		super.onPause();
+		mapView.onPause();
+	}
+
+	@Override
+	public void onLowMemory() {
+		super.onLowMemory();
+		mapView.onLowMemory();
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		mapView.onSaveInstanceState(outState);
+	}
+
 	/*
 	 * UI
 	 */
 	@SuppressLint("DefaultLocale")
 	@Override
-	public View
-	onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View	onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		// For the map
+		Mapbox.getInstance(Objects.requireNonNull(getContext()), getString(R.string.access_token));
+
 		fragmentView = inflater.inflate(R.layout.fragment_terminal, container, false);
+
+//		mapView = fragmentView.findViewById(R.id.mapbox);
+//		mapView.onCreate(savedInstanceState);
+//		mapView.getMapAsync(this);
+
 		sendText = fragmentView.findViewById(R.id.send_text);
 		activeNodes = fragmentView.findViewById(R.id.active_nodes);
 		meshHops = fragmentView.findViewById(R.id.mesh_hops);
@@ -209,6 +268,19 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 		});
 
 		return fragmentView;
+	}
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		mapView = fragmentView.findViewById(R.id.mapbox);
+		mapView.onCreate(savedInstanceState);
+		mapView.getMapAsync(this);
+	}
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		mapView.onDestroy();
 	}
 
 	@Override
@@ -275,9 +347,81 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 			case R.id.reconnect:
 				connect();
 				return true;
+			case R.id.map:
+				LinearLayout mapLayout = fragmentView.findViewById(R.id.map_view);
+				LinearLayout chatLayout = fragmentView.findViewById(R.id.chat_view);
+				if (mapLayout.getVisibility() == View.INVISIBLE) {
+					chatLayout.setVisibility(View.GONE);
+					mapLayout.setVisibility(View.VISIBLE);
+					mapVisible = true;
+					if (fragMapboxMap != null) {
+						LatLng point = new LatLng();
+						point.setLatitude(latDouble);
+						point.setLongitude(longDouble);
+						fragMapboxMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point,12.5));
+					}
+				} else {
+					chatLayout.setVisibility(View.VISIBLE);
+					mapLayout.setVisibility(View.INVISIBLE);
+					mapVisible = false;
+				}
+				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
+	}
+
+	/*
+	 * Map stuff
+	 */
+	@Override
+	public void onMapReady(MapboxMap mapboxMap) { // 14.472670,121.001104
+		fragMapboxMap = mapboxMap;
+		List<Feature> symbolLayerIconFeatureList = new ArrayList<>();
+		symbolLayerIconFeatureList.add(Feature.fromGeometry(
+				Point.fromLngLat(longDouble, latDouble)));
+
+		mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mapbox/cjf4m44iw0uza2spb3q0a7s41")
+
+// Add the SymbolLayer icon image to the map style
+				.withImage(ICON_ID, BitmapFactory.decodeResource(
+						getContext().getResources(), R.drawable.red_marker))
+
+// Adding a GeoJson source for the SymbolLayer icons.
+				.withSource(new GeoJsonSource(SOURCE_ID,
+						FeatureCollection.fromFeatures(symbolLayerIconFeatureList)))
+
+// Adding the actual SymbolLayer to the map style. An offset is added that the bottom of the red
+// marker icon gets fixed to the coordinate, rather than the middle of the icon being fixed to
+// the coordinate point. This is offset is not always needed and is dependent on the image
+// that you use for the SymbolLayer icon.
+				.withLayer(new SymbolLayer(LAYER_ID, SOURCE_ID)
+						.withProperties(PropertyFactory.iconImage(ICON_ID),
+								iconAllowOverlap(true),
+								iconOffset(new Float[] {0f, -9f}))
+				), new Style.OnStyleLoaded() {
+			@Override
+			public void onStyleLoaded(@NonNull Style style) {
+
+// Map is set up and the style has loaded. Now you can add additional data or make other map adjustments.
+
+			}
+		});
+
+//		LatLng point = new LatLng();
+//		point.setLatitude(latDouble);
+//		point.setLongitude(longDouble);
+//		LatLngBounds latLngBounds = new LatLngBounds.Builder()
+//				.include(point) // Northeast
+//				.include(point) // Southwest
+//				.build();
+//		mapboxMap.easeCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 50), 5000);
+		LatLng point = new LatLng();
+		point.setLatitude(latDouble);
+		point.setLongitude(longDouble);
+//            fragMapboxMap.moveCamera(CameraUpdateFactory.newLatLng(point));
+		fragMapboxMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point,12.5));
+//		fragMapboxMap.moveCamera(CameraUpdateFactory.newLatLngPadding(point,500.0,500.0,500.0,500.0));
 	}
 
 	/*

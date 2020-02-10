@@ -19,7 +19,7 @@
         android:elevation="2dp"
         android:textSize="18sp"
         android:layout_alignParentEnd="true"
-        android:text="@string/app_name"
+        android:text="@string/my_app_name"
         />
 
 </RelativeLayout>

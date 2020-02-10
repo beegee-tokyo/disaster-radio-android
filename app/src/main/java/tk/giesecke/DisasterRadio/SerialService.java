@@ -143,7 +143,7 @@ public class SerialService extends Service implements SerialListener {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setColor(getResources().getColor(R.color.colorPrimary))
-                .setContentTitle(getResources().getString(R.string.app_name))
+                .setContentTitle(getResources().getString(R.string.my_app_name))
                 .setContentText(notificationMsg)
                 .setContentIntent(restartPendingIntent)
                 .setOngoing(true)
