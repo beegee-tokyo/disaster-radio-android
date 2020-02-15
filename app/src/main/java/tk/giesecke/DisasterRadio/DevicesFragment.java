@@ -1,6 +1,5 @@
 package tk.giesecke.DisasterRadio;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -10,9 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -165,6 +162,7 @@ public class DevicesFragment extends ListFragment {
 		menu = null;
 	}
 
+	@SuppressLint("ApplySharedPref")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
@@ -174,6 +172,12 @@ public class DevicesFragment extends ListFragment {
 				return true;
 			case R.id.ble_scan_stop:
 				stopScan();
+				return true;
+			case R.id.offline_maps:
+				// Todo Let the user decide if he wants online maps or downloaded maps
+//				Fragment fragment = new OfflineMapmanager();
+//				Objects.requireNonNull(getFragmentManager()).beginTransaction().replace(R.id.fragment,
+//						fragment, "offline_maps").addToBackStack(null).commit();
 				return true;
 			case R.id.bt_settings:
 				Intent intent = new Intent();
@@ -206,36 +210,7 @@ public class DevicesFragment extends ListFragment {
 		if (scanState != ScanState.NONE)
 			return;
 		scanState = ScanState.LESCAN;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			if (Objects.requireNonNull(getActivity()).checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-				scanState = ScanState.NONE;
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				builder.setTitle(R.string.location_permission_title);
-				builder.setMessage(R.string.location_permission_message);
-				builder.setPositiveButton(android.R.string.ok,
-						(dialog, which) -> requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0));
-				builder.show();
-				return;
-			}
-			LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-			boolean locationEnabled = false;
-			try {
-				locationEnabled = Objects.requireNonNull(locationManager).isProviderEnabled(LocationManager.GPS_PROVIDER);
-			} catch (Exception ignored) {
-			}
-			try {
-				locationEnabled |= Objects.requireNonNull(locationManager).isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-			} catch (Exception ignored) {
-			}
-			if (!locationEnabled)
-				scanState = ScanState.DISCOVERY;
-			// Starting with Android 6.0 a bluetooth scan requires ACCESS_COARSE_LOCATION permission, but that's not all!
-			// LESCAN also needs enabled 'location services', whereas DISCOVERY works without.
-			// Most users think of GPS as 'location service', but it includes more, as we see here.
-			// Instead of asking the user to enable something they consider unrelated,
-			// we fall back to the older API that scans for bluetooth classic _and_ LE
-			// sometimes the older API returns less results or slower
-		}
+
 		listItems.clear();
 		listAdapter.notifyDataSetChanged();
 		setEmptyText("<scanning...>");

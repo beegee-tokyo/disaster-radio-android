@@ -16,6 +16,10 @@
         android:visible="false" />
 
     <item
+        android:id="@+id/offline_maps"
+        android:title="@string/download_button_text" />
+
+    <item
         android:id="@+id/bt_settings"
         android:title="@string/devices_bt_settings" />
 
