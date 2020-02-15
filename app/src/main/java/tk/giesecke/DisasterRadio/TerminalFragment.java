@@ -77,6 +77,12 @@ import static tk.giesecke.DisasterRadio.MainActivity.longDouble;
 import static tk.giesecke.DisasterRadio.MainActivity.mPrefs;
 import static tk.giesecke.DisasterRadio.MainActivity.userName;
 
+/**
+ * Terminal fragment holds the chat box and the members map.
+ * Switching between chat box and members map needs improvement as it is not obvious
+ * that it is not the back or home button going back from the map to the chatbox, but
+ * a button at the bottom of the screen.
+ */
 public class TerminalFragment extends Fragment implements ServiceConnection, SerialListener {
 
 	private static final String TAG = "TerminalFragment";
@@ -296,131 +302,10 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
 		mapView = fragmentView.findViewById(R.id.map);
 
-		// Check if offline maps are available
-		
-//		mapView.setTileSource(TileSourceFactory.MAPNIK);
+		// Setup the map
+		setupMap();
 
-		File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/osmdroid/");
-		boolean foundMap = false;
-		if (f.exists()) {
-
-			File[] list = f.listFiles();
-			if (list != null) {
-				for (File file : list) {
-					if (file.isDirectory()) {
-						continue;
-					}
-					String name = file.getName().toLowerCase();
-					if (!name.contains(".")) {
-						continue; //skip files without an extension
-					}
-					name = name.substring(name.lastIndexOf(".") + 1);
-					if (name.length() == 0) {
-						continue;
-					}
-					if (ArchiveFileFactory.isFileExtensionRegistered(name)) {
-						try {
-
-							//ok found a file we support and have a driver for the format, for this demo, we'll just use the first one
-
-							//create the offline tile provider, it will only do offline file archives
-							//again using the first file
-							OfflineTileProvider tileProvider = new OfflineTileProvider(new SimpleRegisterReceiver(getActivity()),
-									new File[]{file});
-
-							//tell osmdroid to use that provider instead of the default rig which is (asserts, cache, files/archives, online
-							mapView.setTileProvider(tileProvider);
-
-							//this bit enables us to find out what tiles sources are available. note, that this action may take some time to run
-							//and should be ran asynchronously. we've put it inline for simplicity
-
-							String source = "MAPNIK";
-
-							IArchiveFile[] archives = tileProvider.getArchives();
-							if (archives.length > 0) {
-								//cheating a bit here, get the first archive file and ask for the tile sources names it contains
-								Set<String> tileSources = archives[0].getTileSources();
-								//presumably, this would be a great place to tell your users which tiles sources are available
-								if (!tileSources.isEmpty()) {
-									//ok good, we found at least one tile source, create a basic file based tile source using that name
-									//and set it. If we don't set it, osmdroid will attempt to use the default source, which is "MAPNIK",
-									//which probably won't match your offline tile source, unless it's MAPNIK
-									source = tileSources.iterator().next();
-									mapView.setTileSource(FileBasedTileSource.getSource(source));
-									mapView.invalidate();
-									foundMap = true;
-								} else {
-									mapView.setTileSource(TileSourceFactory.MAPNIK);
-									mapView.invalidate();
-								}
-							} else {
-								mapView.setTileSource(TileSourceFactory.MAPNIK);
-								mapView.invalidate();
-							}
-							showToast("Using " + file.getAbsolutePath() + " " + source, false);
-							mapView.setUseDataConnection(false);
-							mapView.invalidate();
-						} catch (Exception ex) {
-							ex.printStackTrace();
-						}
-					}
-				}
-			}
-		}
-		if (!foundMap) {
-			showToast(f.getAbsolutePath() + " did not find any map files, using online MAPNIK", true);
-			mapView.setUseDataConnection(true);
-			mapView.setTileSource(TileSourceFactory.MAPNIK);
-			mapView.invalidate();
-		}
-
-		//scales tiles to the current screen's DPI, helps with readability of labels
-		mapView.setTilesScaledToDpi(true);
-
-		//the rest of this is restoring the last map location the user looked at
-		float zoomLevel = mPrefs.getFloat(PREFS_ZOOM_LEVEL_DOUBLE, 5.0f);
-		if (zoomLevel < 15.0f) {
-			zoomLevel = 15.0f;
-		}
-
-		mapView.setMaxZoomLevel(16.0);
-		mapView.setMinZoomLevel(0.0);
-		mapView.getController().setZoom(zoomLevel);
-		final float orientation = mPrefs.getFloat(PREFS_ORIENTATION, 0);
-		mapView.setMapOrientation(orientation, false);
-		final String latitudeString = mPrefs.getString(PREFS_LATITUDE_STRING, "14.0");
-		final String longitudeString = mPrefs.getString(PREFS_LONGITUDE_STRING, "121.0");
-		double latitude = 0.0;
-		if (latitudeString != null) {
-			latitude = Double.valueOf(latitudeString);
-		}
-		double longitude = 0.0;
-		if (longitudeString != null) {
-			longitude = Double.valueOf(longitudeString);
-		}
-		mapView.getController().setCenter(new GeoPoint(latitude, longitude));
-
-		meEntry = new MemberData(getContext(), "me", "#B2EBF2");
-		memberAdapter.add(meEntry);
-		if ((userName != null) && (!userName.equalsIgnoreCase("me"))) {
-			meEntry.setData(userName, "#B2EBF2");
-		}
-		if ((latDouble != 0.0) && (longDouble != 0.0)) {
-			Marker memberMarker = meEntry.setCoords(new GeoPoint(latDouble, longDouble));
-			mapView.getOverlays().add(memberMarker);
-			BoundingBox newBox = createBoundingBox();
-			if (newBox != null) {
-				mapView.zoomToBoundingBox(newBox.increaseByScale(1.3f), true);
-			} else {
-				mapView.getController().setCenter(new GeoPoint(latDouble, longDouble));
-				mapView.getController().setZoom(defaultZoom);
-			}
-		}
-		mapView.invalidate();
-
-		noUserName = new MemberData(getContext(), getString(R.string.default_rcvd_name), "#F06262");
-		memberAdapter.add(noUserName);
-
+		// Register the receiver for location changes
 		final IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(LOCATION_UPDATE);
 		LocalBroadcastManager.getInstance(thisContext).registerReceiver(MyLocationUpdate, intentFilter);
@@ -518,6 +403,135 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 	/*
 	 * Map stuff
 	 */
+	private void setupMap() {
+		// Check if offline maps are available
+		File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/osmdroid/");
+		boolean foundMap = false;
+		if (f.exists()) {
+
+			File[] list = f.listFiles();
+			if (list != null) {
+				for (File file : list) {
+					if (file.isDirectory()) {
+						continue;
+					}
+					String name = file.getName().toLowerCase();
+					if (!name.contains(".")) {
+						continue; //skip files without an extension
+					}
+					name = name.substring(name.lastIndexOf(".") + 1);
+					if (name.length() == 0) {
+						continue;
+					}
+					if (ArchiveFileFactory.isFileExtensionRegistered(name)) {
+						try {
+
+							//ok found a file we support and have a driver for the format, for this demo, we'll just use the first one
+
+							//create the offline tile provider, it will only do offline file archives
+							//again using the first file
+							OfflineTileProvider tileProvider = new OfflineTileProvider(new SimpleRegisterReceiver(getActivity()),
+									new File[]{file});
+
+							//tell osmdroid to use that provider instead of the default rig which is (asserts, cache, files/archives, online
+							mapView.setTileProvider(tileProvider);
+
+							//this bit enables us to find out what tiles sources are available. note, that this action may take some time to run
+							//and should be ran asynchronously. we've put it inline for simplicity
+
+							String source = "MAPNIK";
+
+							IArchiveFile[] archives = tileProvider.getArchives();
+							if (archives.length > 0) {
+								//cheating a bit here, get the first archive file and ask for the tile sources names it contains
+								Set<String> tileSources = archives[0].getTileSources();
+								//presumably, this would be a great place to tell your users which tiles sources are available
+								if (!tileSources.isEmpty()) {
+									//ok good, we found at least one tile source, create a basic file based tile source using that name
+									//and set it. If we don't set it, osmdroid will attempt to use the default source, which is "MAPNIK",
+									//which probably won't match your offline tile source, unless it's MAPNIK
+									source = tileSources.iterator().next();
+									mapView.setTileSource(FileBasedTileSource.getSource(source));
+									mapView.invalidate();
+									foundMap = true;
+								} else {
+									mapView.setTileSource(TileSourceFactory.MAPNIK);
+									mapView.invalidate();
+								}
+							} else {
+								mapView.setTileSource(TileSourceFactory.MAPNIK);
+								mapView.invalidate();
+							}
+							showToast("Using " + file.getAbsolutePath() + " " + source, false);
+							mapView.setUseDataConnection(false);
+							mapView.invalidate();
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+
+		if (!foundMap) {
+			showToast(f.getAbsolutePath() + " did not find any map files, using online MAPNIK", true);
+			mapView.setUseDataConnection(true);
+			mapView.setTileSource(TileSourceFactory.MAPNIK);
+			mapView.invalidate();
+		}
+
+		// Initialize the map parameters
+
+		//scales tiles to the current screen's DPI, helps with readability of labels
+		mapView.setTilesScaledToDpi(true);
+
+		//the rest of this is restoring the last map location the user looked at
+		float zoomLevel = mPrefs.getFloat(PREFS_ZOOM_LEVEL_DOUBLE, 5.0f);
+		if (zoomLevel < 15.0f) {
+			zoomLevel = 15.0f;
+		}
+
+		mapView.setMaxZoomLevel(16.0);
+		mapView.setMinZoomLevel(0.0);
+		mapView.getController().setZoom(zoomLevel);
+		final float orientation = mPrefs.getFloat(PREFS_ORIENTATION, 0);
+		mapView.setMapOrientation(orientation, false);
+		final String latitudeString = mPrefs.getString(PREFS_LATITUDE_STRING, "14.0");
+		final String longitudeString = mPrefs.getString(PREFS_LONGITUDE_STRING, "121.0");
+		double latitude = 0.0;
+		if (latitudeString != null) {
+			latitude = Double.valueOf(latitudeString);
+		}
+		double longitude = 0.0;
+		if (longitudeString != null) {
+			longitude = Double.valueOf(longitudeString);
+		}
+		mapView.getController().setCenter(new GeoPoint(latitude, longitude));
+
+		// Add yourself to the member data
+		meEntry = new MemberData(getContext(), "me", "#B2EBF2");
+		memberAdapter.add(meEntry);
+		if ((userName != null) && (!userName.equalsIgnoreCase("me"))) {
+			meEntry.setData(userName, "#B2EBF2");
+		}
+		if ((latDouble != 0.0) && (longDouble != 0.0)) {
+			Marker memberMarker = meEntry.setCoords(new GeoPoint(latDouble, longDouble));
+			mapView.getOverlays().add(memberMarker);
+			BoundingBox newBox = createBoundingBox();
+			if (newBox != null) {
+				mapView.zoomToBoundingBox(newBox.increaseByScale(1.3f), true);
+			} else {
+				mapView.getController().setCenter(new GeoPoint(latDouble, longDouble));
+				mapView.getController().setZoom(defaultZoom);
+			}
+		}
+		mapView.invalidate();
+
+		// Add a member for messages that do not contain a member name. They will be shown as "DisasterRadio"
+		noUserName = new MemberData(getContext(), getString(R.string.default_rcvd_name), "#F06262");
+		memberAdapter.add(noUserName);
+	}
+
 	private BoundingBox createBoundingBox() {
 		List<GeoPoint> memberMapCoords = new ArrayList<>();
 		for (int idx = 0; idx < memberAdapter.getCount(); idx++) {

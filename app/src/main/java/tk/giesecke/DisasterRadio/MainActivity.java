@@ -31,6 +31,10 @@ import static android.location.Criteria.ACCURACY_FINE;
 import static android.location.Criteria.ACCURACY_HIGH;
 import static tk.giesecke.DisasterRadio.TerminalFragment.meEntry;
 
+/**
+ * MainActivity requests permissions for location service, internet access and local storage write rights if required.
+ * It is the fragment manager for the device discovery and chat box fragments
+ */
 public class MainActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener, LocationListener {
 
 	private static final String TAG = "DisasterRadio";

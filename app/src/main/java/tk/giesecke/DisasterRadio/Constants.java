@@ -1,5 +1,8 @@
 package tk.giesecke.DisasterRadio;
 
+/**
+ * Constants for the BLE UART functionality
+ */
 class Constants {
 
     // values have to be globally unique

@@ -14,6 +14,9 @@ import org.osmdroid.views.overlay.Marker;
 
 import static tk.giesecke.DisasterRadio.TerminalFragment.mapView;
 
+/**
+ * MemberData class holds the data for a member that has joined DisasterRadio chat.
+ */
 public class MemberData {
 	private String name;
 	private String color;

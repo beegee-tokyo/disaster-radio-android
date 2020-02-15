@@ -1,5 +1,10 @@
 package tk.giesecke.DisasterRadio.msg;
 
+/**
+ * Message holds incoming messages.
+ * Beside of the message itself, it holds a link to the member data
+ * of the member that has sent the message.
+ */
 public class Message {
 	private final String text; // message body
 	private final MemberData memberData; // members data (name & display color)

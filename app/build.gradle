@@ -8,8 +8,8 @@ android {
         vectorDrawables.useSupportLibrary true
 
         applicationId 'tk.giesecke.disaster_radio'
-        versionCode 11
-        versionName '1.1'
+        versionCode 12
+        versionName '1.2'
         project.ext.set("archivesBaseName", "tk.giesecke.disaster_radio-V_" + defaultConfig.versionName)
     }
     compileOptions {

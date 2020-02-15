@@ -17,6 +17,10 @@ import java.util.Objects;
 
 import tk.giesecke.DisasterRadio.R;
 
+/**
+ * MessageAdapter is the interface to Message class
+ */
+
 public class MessageAdapter extends BaseAdapter {
 	private final List<Message> messages = new ArrayList<>();
 	private final Context context;
@@ -81,6 +85,9 @@ public class MessageAdapter extends BaseAdapter {
 
 }
 
+/**
+ * The holder for the data of a message
+ */
 class MessageViewHolder {
 	public TextView name;
 	TextView messageBody;

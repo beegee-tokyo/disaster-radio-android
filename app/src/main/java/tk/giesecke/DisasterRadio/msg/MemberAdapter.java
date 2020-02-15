@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * MemberAdapter is the adapter to handle the MemberData class.
+ * It provides an interface to access the MemberData entries
+ */
 public class MemberAdapter extends BaseAdapter {
 	private final List<MemberData> members = new ArrayList<>();
 

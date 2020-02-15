@@ -33,7 +33,9 @@ import java.util.Collections;
 import java.util.Objects;
 
 /**
- * show list of BLE devices
+ * Search and display BLE devices.
+ * The BLE devices are filtered by there advertising name and only devices
+ * that are running DisasterRadio firmware are shown in the resulting list
  */
 public class DevicesFragment extends ListFragment {
 
