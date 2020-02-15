@@ -559,7 +559,10 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 						String.format("%.6f", longDouble) + "]}";
 				byte[] data = currentPos.getBytes();
 				try {
-					socket.write(data);
+					if (connected == Connected.True) {
+//					if (socket != null) {
+						socket.write(data);
+					}
 				} catch (IOException e) {
 					onSerialIoError(e);
 				}
