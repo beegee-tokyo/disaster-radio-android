@@ -35,7 +35,7 @@ import java.util.Objects;
 /**
  * Search and display BLE devices.
  * The BLE devices are filtered by there advertising name and only devices
- * that are running DisasterRadio firmware are shown in the resulting list
+ * that are running emy_chat firmware are shown in the resulting list
  */
 public class DevicesFragment extends ListFragment {
 

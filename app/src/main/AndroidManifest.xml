@@ -6,18 +6,19 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
     <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- mipmap/ic_launcher created with Android Studio -> New -> Image Asset using @color/colorPrimaryDark as background color -->
     <application
         android:icon="@mipmap/ic_launcher"
         android:label="@string/my_app_name"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity
-            android:name=".MainActivity"
+            android:name="tk.giesecke.DisasterRadio.MainActivity"
             android:label="@string/my_app_name"
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
@@ -25,7 +26,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".SerialService" />
+        <service android:name="tk.giesecke.DisasterRadio.SerialService" />
     </application>
 
 </manifest>

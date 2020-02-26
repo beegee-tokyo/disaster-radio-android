@@ -14,12 +14,33 @@
         android:orientation="vertical"
         android:visibility="visible">
 
-        <ListView
-            android:id="@+id/messages_view"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="2"
-            android:divider="#fff" />
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <ListView
+                android:id="@+id/messages_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:divider="#fff" />
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="?android:attr/listDivider" />
+
+            <ListView
+                android:id="@+id/nodes_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:divider="#fff" />
+
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
@@ -62,42 +83,12 @@
 
         </LinearLayout>
 
-        <ScrollView
-            android:id="@+id/sv_mesh"
+        <TextView
+            android:id="@+id/node_info"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginBottom="20dp"
-            android:layout_weight="0.2">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/active_nodes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:ems="10" />
-
-                <TextView
-                    android:id="@+id/mesh_hops"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:ems="10" />
-
-                <TextView
-                    android:id="@+id/mesh_metrics"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:ems="10" />
-
-            </LinearLayout>
-
-        </ScrollView>
+            android:layout_weight="0.1"
+            android:ems="10" />
 
     </LinearLayout>
 

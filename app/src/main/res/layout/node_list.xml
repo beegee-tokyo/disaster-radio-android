@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:targetApi="o">
+
+    <TextView
+        android:id="@+id/nodes_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="false"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:background="@android:drawable/button_onoff_indicator_on"
+        android:elevation="2dp"
+        android:padding="5dp"
+        android:scrollHorizontally="false"
+        android:text="@string/my_app_name"
+        android:textAlignment="center"
+        android:textColor="#000"
+        android:textSize="12sp" />
+
+</RelativeLayout>

@@ -17,9 +17,14 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/setup"
+        android:id="@+id/user_name"
         android:icon="@android:drawable/ic_menu_preferences"
-        android:title="@string/settings_username_title" />
+        android:title="@string/settings_username" />
+
+    <item
+        android:id="@+id/ui_switch"
+        android:icon="@drawable/ic_menu_offline"
+        android:title="@string/settings_switch_ui" />
 
     <item
         android:id="@+id/chat_about"

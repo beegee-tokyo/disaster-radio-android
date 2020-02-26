@@ -32,7 +32,8 @@
     <string name="chat_clear">Clear</string>
     <string name="chat_username_hint">Enter your username</string>
 
-    <string name="settings_username_title">Enter or change your username</string>
+    <string name="settings_username">Enter or change your username</string>
+    <string name="settings_switch_ui">Switch to WiFi interface</string>
 
     <string name="string_delete">Delete</string>
 

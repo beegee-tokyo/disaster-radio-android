@@ -37,7 +37,7 @@ import static tk.giesecke.DisasterRadio.TerminalFragment.meEntry;
  */
 public class MainActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener, LocationListener {
 
-	private static final String TAG = "DisasterRadio";
+	private static final String TAG = "emy_chat";
 	public static final String LOCATION_UPDATE = "location";
 
 	public static String userName = null;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 	 */
 	public static SharedPreferences mPrefs;
 	/* Name of shared preferences */
-	private static final String sharedPrefName = "DisasterRadio";
+	private static final String sharedPrefName = "emy_chat";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +72,9 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
 		// Get pointer to shared preferences
 		mPrefs = getSharedPreferences(sharedPrefName, 0);
-		if (mPrefs.contains("userName")) {
-			userName = mPrefs.getString("userName", "me");
-		}
+//		if (mPrefs.contains("userName")) {
+//			userName = mPrefs.getString("userName", "me");
+//		}
 
 		appContext = this;
 
