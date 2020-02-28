@@ -1,3 +1,1 @@
-Android app for
-<a href="https://disaster.radio">disaster.radio</a>
-a disaster-resilient communications network powered by the sun
+Android chat app for DisasterRadio
