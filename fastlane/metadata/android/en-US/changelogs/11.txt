@@ -1,0 +1,1 @@
+Added Mesh info to chat screen. Shows Active nodes, hops and metrics on lower part of the screen.

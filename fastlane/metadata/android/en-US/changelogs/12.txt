@@ -1,0 +1,2 @@
+Added map of connected nodes (works only for nodes that use BLE)
+Added sound notification for @me messages and connection loss

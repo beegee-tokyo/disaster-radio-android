@@ -1,0 +1,12 @@
+Android app for
+<a href="https://disaster.radio">disaster.radio</a>
+a disaster-resilient communications network powered by the sun
+When the critical infrastructure that so many of us take for granted goes away, how do we organize ourselves and our communities to respond?
+
+If recent ecological disasters have demonstrated anything, it is the inadequacy of existing models and tools to provide efficient allocation of resources, access to emergency communications, and effective coordination of human effort. Few if any solutions exist that are off-grid, affordable, reliable, easily deployed, and openly standardized.
+
+disaster.radio addresses this problem.
+
+disaster.radio is an off-grid, solar-powered, long-range mesh network built on free, open source software and affordable, open hardware.
+
+Designed to be open, distributed, and decentralized, disaster.radio is currently in the prototype/development phase.

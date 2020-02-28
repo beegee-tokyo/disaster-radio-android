@@ -1,0 +1,2 @@
+This release is for ESP32 DisasterRadio V1.0.0-rc.1.
+It might fail with older versions of the DisasterRadio app

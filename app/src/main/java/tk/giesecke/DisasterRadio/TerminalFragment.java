@@ -15,7 +15,6 @@ import android.graphics.Color;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -770,7 +769,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 			if (userName != null) {
 				String mention = "@" + userName;
 				if (rcvd.contains(mention)) {
-					// TODO make notification tone user selectable
 					try {
 						Uri path = Uri.parse("android.resource://" + thisContext.getPackageName() + "/raw/dingdong.mp3");
 						RingtoneManager.setActualDefaultRingtoneUri(
@@ -778,9 +776,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 						);
 						Ringtone r = RingtoneManager.getRingtone(thisContext, path);
 						r.play();
-//						Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//						Ringtone r = RingtoneManager.getRingtone(thisContext, notification);
-//						r.play();
 					} catch (Exception exp) {
 						exp.printStackTrace();
 					}
@@ -918,7 +913,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
 	@Override
 	public void onSerialIoError(Exception e) {
-		// TODO make alarm user selectable
 		try {
 			Uri path = Uri.parse("android.resource://" + thisContext.getPackageName() + "/raw/signal.mp3");
 			RingtoneManager.setActualDefaultRingtoneUri(
@@ -926,16 +920,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 			);
 			Ringtone r = RingtoneManager.getRingtone(thisContext, path);
 			r.play();
-//			Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-//			Ringtone alarmTone = RingtoneManager.getRingtone(thisContext, notification);
-//			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-//				alarmTone.setLooping(false);
-//			} else {
-//				Handler handler = new Handler();
-//				final Runnable stopAlarm = alarmTone::stop;
-//				handler.postDelayed(stopAlarm, 3000);
-//			}
-//			alarmTone.play();
 		} catch (Exception exp) {
 			exp.printStackTrace();
 		}
