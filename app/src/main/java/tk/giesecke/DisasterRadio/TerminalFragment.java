@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -60,6 +61,7 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -769,16 +771,25 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 			if (userName != null) {
 				String mention = "@" + userName;
 				if (rcvd.contains(mention)) {
+//					try {
+//						Uri path = Uri.parse("android.resource://" + thisContext.getPackageName() + "/raw/dingdong.mp3");
+//						RingtoneManager.setActualDefaultRingtoneUri(
+//								thisContext, RingtoneManager.TYPE_RINGTONE, path
+//						);
+//						Ringtone r = RingtoneManager.getRingtone(thisContext, path);
+//						r.play();
+//					} catch (Exception exp) {
+//						exp.printStackTrace();
+//					}
+					MediaPlayer mPlayer = MediaPlayer.create(getContext(), R.raw.dingdong);
+
 					try {
-						Uri path = Uri.parse("android.resource://" + thisContext.getPackageName() + "/raw/dingdong.mp3");
-						RingtoneManager.setActualDefaultRingtoneUri(
-								thisContext, RingtoneManager.TYPE_RINGTONE, path
-						);
-						Ringtone r = RingtoneManager.getRingtone(thisContext, path);
-						r.play();
-					} catch (Exception exp) {
-						exp.printStackTrace();
+						mPlayer.prepare();
+					} catch (IllegalStateException | IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
+					mPlayer.start();
 				}
 			}
 		} else if (rcvdBytes[2] == 'u') {
@@ -913,16 +924,26 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
 	@Override
 	public void onSerialIoError(Exception e) {
+		MediaPlayer mPlayer = MediaPlayer.create(getContext(), R.raw.dingdong);
+
 		try {
-			Uri path = Uri.parse("android.resource://" + thisContext.getPackageName() + "/raw/signal.mp3");
-			RingtoneManager.setActualDefaultRingtoneUri(
-					thisContext, RingtoneManager.TYPE_RINGTONE, path
-			);
-			Ringtone r = RingtoneManager.getRingtone(thisContext, path);
-			r.play();
-		} catch (Exception exp) {
-			exp.printStackTrace();
+			mPlayer.prepare();
+		} catch (IllegalStateException | IOException ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
 		}
+		mPlayer.start();
+
+//		try {
+//			Uri path = Uri.parse("android.resource://" + thisContext.getPackageName() + "/raw/signal.mp3");
+//			RingtoneManager.setActualDefaultRingtoneUri(
+//					thisContext, RingtoneManager.TYPE_RINGTONE, path
+//			);
+//			Ringtone r = RingtoneManager.getRingtone(thisContext, path);
+//			r.play();
+//		} catch (Exception exp) {
+//			exp.printStackTrace();
+//		}
 		showToast(getString(R.string.chat_connection_error), true);
 		disconnect();
 		thisMenu.findItem(R.id.reconnect).setVisible(true);
