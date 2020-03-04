@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:ignore="LabelFor,NestedWeights"
+    android:baselineAligned="false">
+
+    <LinearLayout
+        android:id="@+id/chat_view"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <ListView
+                android:id="@+id/messages_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:divider="#fff" />
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="?android:attr/listDivider" />
+
+            <ListView
+                android:id="@+id/nodes_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:divider="#fff" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/show_map_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@android:drawable/btn_default"
+                android:contentDescription="@string/my_app_name"
+                android:visibility="gone"
+                app:srcCompat="@android:drawable/ic_menu_mapmode" />
+
+            <EditText
+                android:id="@+id/send_text"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:autofillHints="@string/chat_send_hint"
+                android:inputType="text|textCapSentences|textAutoComplete|textImeMultiLine"
+                android:singleLine="false"
+                tools:targetApi="o" />
+
+            <ImageButton
+                android:id="@+id/send_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@android:drawable/btn_default"
+                android:contentDescription="@android:string/ok"
+                app:srcCompat="@drawable/ic_send_white_24dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/map_view"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:visibility="visible">
+
+        <org.osmdroid.views.MapView
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+        </org.osmdroid.views.MapView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/send_map_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="center"
+                android:layout_marginEnd="30dp"
+                android:background="@android:drawable/btn_default"
+                android:contentDescription="@string/my_app_name"
+                app:srcCompat="@android:drawable/ic_menu_share" />
+
+            <ScrollView
+                android:id="@+id/sv_mesh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginBottom="20dp"
+                android:layout_toStartOf="@id/send_map_btn">
+
+                <!--            <LinearLayout-->
+                <!--                android:layout_width="match_parent"-->
+                <!--                android:layout_height="wrap_content"-->
+                <!--                android:orientation="horizontal">-->
+
+                <TextView
+                    android:id="@+id/node_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10" />
+
+                <!--            </LinearLayout>-->
+
+            </ScrollView>
+
+            <ImageButton
+                android:id="@+id/show_chat_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_gravity="center"
+                android:layout_marginStart="30dp"
+                android:background="@android:drawable/btn_default"
+                android:contentDescription="@string/my_app_name"
+                android:visibility="gone"
+                app:srcCompat="@android:drawable/sym_action_chat" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
+

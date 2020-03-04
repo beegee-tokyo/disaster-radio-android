@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
@@ -15,9 +16,12 @@ import android.os.Looper;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
+
+import static tk.giesecke.DisasterRadio.MainActivity.userName;
 
 /**
  * Service to create notification and queue serial data while activity is not in the foreground
@@ -31,7 +35,7 @@ public class SerialService extends Service implements SerialListener {
 
     private enum QueueType {Connect, ConnectError, Read, IoError}
 
-    private class QueueItem {
+    private static class QueueItem {
         final QueueType type;
         final byte[] data;
         final Exception e;
@@ -141,7 +145,7 @@ public class SerialService extends Service implements SerialListener {
         PendingIntent disconnectPendingIntent = PendingIntent.getBroadcast(this, 1, disconnectIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent restartPendingIntent = PendingIntent.getActivity(this, 1, restartIntent,  PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL)
-                .setSmallIcon(R.drawable.ic_notification)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setColor(getResources().getColor(R.color.colorPrimary))
                 .setContentTitle(getResources().getString(R.string.my_app_name))
                 .setContentText(notificationMsg)
@@ -214,6 +218,8 @@ public class SerialService extends Service implements SerialListener {
                     });
                 } else {
                     queue2.add(new QueueItem(QueueType.Read, data, null));
+                    // Show a notification with the received message
+                    showMsgNotification(data);
                 }
             }
         }
@@ -241,4 +247,56 @@ public class SerialService extends Service implements SerialListener {
         }
     }
 
+    private void showMsgNotification(byte[] data) {
+        if (data[2] == 'c') {
+            String rcvd = new String(data);
+            rcvd = rcvd.substring(4);
+
+            if (userName != null) {
+                String mention = "@" + userName;
+                if (rcvd.contains(mention)) {
+                    try {
+                        MediaPlayer mPlayer = MediaPlayer.create(this, R.raw.signal);
+
+                        try {
+                            mPlayer.prepare();
+                        } catch (IllegalStateException | IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                        mPlayer.start();
+                    } catch (Exception exp) {
+                        exp.printStackTrace();
+                    }
+                }
+            }
+
+            Intent restartIntent = new Intent()
+                    .setClassName(this, Constants.INTENT_CLASS_MAIN_ACTIVITY)
+                    .setAction(Intent.ACTION_MAIN)
+                    .addCategory(Intent.CATEGORY_LAUNCHER);
+            PendingIntent restartPendingIntent = PendingIntent.getActivity(this, 1, restartIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setColor(getResources().getColor(android.R.color.holo_red_light))
+                    .setContentTitle(getResources().getString(R.string.my_app_name))
+                    .setContentText(rcvd)
+                    .setLights(0xAAAAAA, 500, 500)
+                    .setContentIntent(restartPendingIntent)
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .setWhen(System.currentTimeMillis());
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel nc = new NotificationChannel(Constants.NOTIFICATION_CHANNEL, "Background message", NotificationManager.IMPORTANCE_DEFAULT);
+                nc.setShowBadge(false);
+                nc.setLightColor(0xAAAAAA);
+                NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                nm.createNotificationChannel(nc);
+                nm.notify(15, builder.build());
+            } else {
+                builder.build().notify();
+            }
+        }
+    }
 }
