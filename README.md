@@ -7,6 +7,13 @@ This app connects over BLE to a nearby LoRa node that runs the [DisasterRadio fi
 _disaster.radio is a collaborative project between Sudo Mesh and Secure Scuttlebutt, with additional support from the Internet Society and Institute For the Future_    
 Except where otherwise noted, this app is licensed under a GNU General Public License v3 license.
 
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/tk.giesecke.disaster_radio/)
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
+     alt="Get it on Google Play"
+     height="80">](https://play.google.com/store/apps/details?id=tk.giesecke.disaster_radio)
+
 ## Using the app
 To be able to use the Android app to connect to a DisasterRadio LoRa node, the node must run the [DisasterRadio firmware](https://github.com/sudomesh/disaster-radio). Please check the Github repo how to create and flash a DisasterRadio version that supports BLE.    
 
