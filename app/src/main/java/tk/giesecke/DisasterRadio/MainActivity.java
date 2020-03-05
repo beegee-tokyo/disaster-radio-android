@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -29,6 +30,8 @@ import java.util.Objects;
 
 import static android.location.Criteria.ACCURACY_FINE;
 import static android.location.Criteria.ACCURACY_HIGH;
+import static tk.giesecke.DisasterRadio.TerminalFragment.chatLayout;
+import static tk.giesecke.DisasterRadio.TerminalFragment.mapLayout;
 import static tk.giesecke.DisasterRadio.TerminalFragment.meEntry;
 
 /**
@@ -50,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 	private LocationManager locationManagerGPS;
 	private LocationManager locationManagerNetwork;
 	private LocationManager locationManagerPassive;
+
+	public static boolean showingMap = false;
 
 	/*
 	 * Access to activities shared preferences
@@ -217,4 +222,17 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		Log.d(TAG, provider + " status");
 	}
+
+	@Override
+	public void onBackPressed() {
+		if (showingMap) {
+			chatLayout.setVisibility(View.VISIBLE);
+			mapLayout.setVisibility(View.INVISIBLE);
+			showingMap = false;
+		} else {
+			super.onBackPressed();
+		}
+	}
+
+
 }

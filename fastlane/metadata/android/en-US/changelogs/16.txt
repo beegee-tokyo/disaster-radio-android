@@ -1,0 +1,3 @@
+Fix message notifications and sound.
+Add time stamp to chat window.
+Remove trailing whitespaces from incoming messages.

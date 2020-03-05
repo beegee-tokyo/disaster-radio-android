@@ -19,15 +19,15 @@ import static tk.giesecke.DisasterRadio.TerminalFragment.mapView;
  */
 public class MemberData {
 	private String name;
-	private String color;
+	private int color;
 	private GeoPoint point;
 	private Marker marker;
 	private boolean latLngValid;
 	private final Context appContext;
 
-	public MemberData(Context thisContext, String name, String color) {
-		this.name = name;
-		this.color = color;
+	public MemberData(Context thisContext, String newName, int newColor) {
+		this.name = newName;
+		this.color = newColor;
 		this.point = new GeoPoint(0d,0d);
 		this.latLngValid = false;
 		this.marker = null;
@@ -35,16 +35,16 @@ public class MemberData {
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
-	public String getColor() {
+	public int getColor() {
 		return color;
 	}
 
-	public void setData(String name, String color) {
-		this.name = name;
-		this.color = color;
+	public void setData(String newName, int newColor) {
+		this.name = newName;
+		this.color = newColor;
 	}
 
 	public boolean isCoordValid() {

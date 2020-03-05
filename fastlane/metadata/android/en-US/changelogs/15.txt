@@ -1,0 +1,2 @@
+Added new layout for tablets in landscape view with both chat and map
+Added notifications for messages when app is in background

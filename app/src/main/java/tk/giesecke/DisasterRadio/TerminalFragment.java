@@ -110,13 +110,12 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 	private ListView nodesView;
 	private NodesAdapter nodesAdapter;
 
-	private View fragmentView;
+	private static View fragmentView;
 	private EditText sendText;
 	private TextView nodeInfo;
 
-
-	private LinearLayout mapLayout;
-	private LinearLayout chatLayout;
+	public static LinearLayout mapLayout;
+	public static LinearLayout chatLayout;
 
 	private final double defaultZoom = 14.0;
 
@@ -238,7 +237,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 	 * UI
 	 */
 	private void setInfo() {
-		@SuppressLint("DefaultLocale") String deviceInfo = "Device: " + userName + " Loc: lat " + String.format("%.3f long ", latDouble) + String.format("%.3f", longDouble);
+		@SuppressLint("DefaultLocale") String deviceInfo = ">" + userName + "< Loc: lat " + String.format("%.3f long ", latDouble) + String.format("%.3f", longDouble);
 		nodeInfo.setText(deviceInfo);
 	}
 
@@ -287,6 +286,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
 		View showMapBtn = fragmentView.findViewById(R.id.show_map_btn);
 		showMapBtn.setOnClickListener(v -> {
+			MainActivity.showingMap = true;
 			if ((!meEntry.isCoordValid()) || (mapView.getOverlays().isEmpty())) {
 				chatLayout.setVisibility(View.GONE);
 				mapLayout.setVisibility(View.VISIBLE);
@@ -312,6 +312,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 		});
 		View showChatBtn = fragmentView.findViewById(R.id.show_chat_btn);
 		showChatBtn.setOnClickListener(v -> {
+			MainActivity.showingMap = false;
 			chatLayout.setVisibility(View.VISIBLE);
 			mapLayout.setVisibility(View.INVISIBLE);
 		});
@@ -435,6 +436,13 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 		toast.show();
 	}
 
+	private static void showSnackbar(String snackMessage) {
+		Snackbar snackbar = Snackbar
+				.make(fragmentView, snackMessage, Snackbar.LENGTH_SHORT);
+		snackbar.show();
+
+	}
+
 	/*
 	 * Map stuff
 	 */
@@ -497,10 +505,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 								mapView.setTileSource(TileSourceFactory.MAPNIK);
 								mapView.invalidate();
 							}
-//							showToast("Using " + file.getAbsolutePath() + " " + source, false);
-							Snackbar snackbar = Snackbar
-									.make(fragmentView, "Using " + file.getAbsolutePath() + " " + source, Snackbar.LENGTH_SHORT);
-							snackbar.show();
+							showSnackbar("Using " + file.getAbsolutePath() + " " + source);
 							mapView.setUseDataConnection(false);
 							mapView.invalidate();
 						} catch (Exception ex) {
@@ -512,10 +517,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 		}
 
 		if (!foundMap) {
-//			showToast(f.getAbsolutePath() + " did not find any map files, using online MAPNIK", true);
-			Snackbar snackbar = Snackbar
-					.make(fragmentView, f.getAbsolutePath() + " did not find any map files, using online MAPNIK", Snackbar.LENGTH_SHORT);
-			snackbar.show();
+			showSnackbar(f.getAbsolutePath() + " did not find any map files, using online MAPNIK");
 			mapView.setUseDataConnection(true);
 			mapView.setTileSource(TileSourceFactory.MAPNIK);
 			mapView.invalidate();
@@ -525,6 +527,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
 		//scales tiles to the current screen's DPI, helps with readability of labels
 		mapView.setTilesScaledToDpi(true);
+
 
 		//the rest of this is restoring the last map location the user looked at
 		float zoomLevel = mPrefs.getFloat(PREFS_ZOOM_LEVEL_DOUBLE, 5.0f);
@@ -550,10 +553,10 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 		mapView.getController().setCenter(new GeoPoint(latitude, longitude));
 
 		// Add yourself to the member data
-		meEntry = new MemberData(getContext(), "me", "#B2EBF2");
+		meEntry = new MemberData(getContext(), "me", R.color.device_me);
 		memberAdapter.add(meEntry);
 		if ((userName != null) && (!userName.equalsIgnoreCase("me"))) {
-			meEntry.setData(userName, "#B2EBF2");
+			meEntry.setData(userName, R.color.device_me);
 		}
 		if ((latDouble != 0.0) && (longDouble != 0.0)) {
 			Marker memberMarker = meEntry.setCoords(new GeoPoint(latDouble, longDouble));
@@ -569,7 +572,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 		mapView.invalidate();
 
 		// Add a member for messages that do not contain a member name. They will be shown as "emy_chat"
-		noUserName = new MemberData(getContext(), getString(R.string.default_rcvd_name), "#F06262");
+		noUserName = new MemberData(getContext(), getString(R.string.default_rcvd_name), R.color.device_ec);
 		memberAdapter.add(noUserName);
 	}
 
@@ -764,31 +767,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 			messageAdapter.add(message);
 			// scroll the ListView to the last added element
 			messagesView.setSelection(messagesView.getCount() - 1);
-
-			if (userName != null) {
-				String mention = "@" + userName;
-				if (rcvd.contains(mention)) {
-//					try {
-//						Uri path = Uri.parse("android.resource://" + thisContext.getPackageName() + "/raw/dingdong.mp3");
-//						RingtoneManager.setActualDefaultRingtoneUri(
-//								thisContext, RingtoneManager.TYPE_RINGTONE, path
-//						);
-//						Ringtone r = RingtoneManager.getRingtone(thisContext, path);
-//						r.play();
-//					} catch (Exception exp) {
-//						exp.printStackTrace();
-//					}
-					MediaPlayer mPlayer = MediaPlayer.create(getContext(), R.raw.dingdong);
-
-					try {
-						mPlayer.prepare();
-					} catch (IllegalStateException | IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					mPlayer.start();
-				}
-			}
 		} else if (rcvdBytes[2] == 'u') {
 			String newUserName = new String(rcvdBytes);
 			userName = newUserName.substring(4);
@@ -898,12 +876,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 	public void onSerialConnect() {
 		showToast(getString(R.string.chat_connected), false);
 		connected = Connected.True;
-//		if (userName != null) {
-//			send("~" + userName + " " + getString(R.string.chat_joined), "c");
-//			Handler handler = new Handler();
-//			final Runnable sendUserName = () -> send(userName, "u");
-//			handler.postDelayed(sendUserName, 500);
-//		}
 		thisMenu.findItem(R.id.reconnect).setVisible(false);
 	}
 
@@ -921,26 +893,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
 	@Override
 	public void onSerialIoError(Exception e) {
-		MediaPlayer mPlayer = MediaPlayer.create(getContext(), R.raw.dingdong);
-
-		try {
-			mPlayer.prepare();
-		} catch (IllegalStateException | IOException ex) {
-			// TODO Auto-generated catch block
-			ex.printStackTrace();
-		}
-		mPlayer.start();
-
-//		try {
-//			Uri path = Uri.parse("android.resource://" + thisContext.getPackageName() + "/raw/signal.mp3");
-//			RingtoneManager.setActualDefaultRingtoneUri(
-//					thisContext, RingtoneManager.TYPE_RINGTONE, path
-//			);
-//			Ringtone r = RingtoneManager.getRingtone(thisContext, path);
-//			r.play();
-//		} catch (Exception exp) {
-//			exp.printStackTrace();
-//		}
 		showToast(getString(R.string.chat_connection_error), true);
 		disconnect();
 		thisMenu.findItem(R.id.reconnect).setVisible(true);

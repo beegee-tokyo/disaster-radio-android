@@ -22,4 +22,14 @@
         android:text="@string/my_app_name"
         />
 
+    <TextView
+        android:id="@+id/message_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/message_body"
+        android:layout_alignParentEnd="true"
+        android:text="@string/my_app_name"
+        android:textColor="#000"
+        android:textSize="12sp" />
+
 </RelativeLayout>

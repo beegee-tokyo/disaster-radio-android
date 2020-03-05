@@ -29,6 +29,9 @@ import static tk.giesecke.DisasterRadio.MainActivity.userName;
  */
 public class SerialService extends Service implements SerialListener {
 
+	private Notification msgNotification;
+	private NotificationManager notifManager;
+
     class SerialBinder extends Binder {
         SerialService getService() { return SerialService.this; }
     }
@@ -159,6 +162,10 @@ public class SerialService extends Service implements SerialListener {
     }
 
     private void cancelNotification() {
+        if (notifManager != null) {
+            notifManager.cancelAll();
+            notifManager = null;
+        }
         stopForeground(true);
     }
 
@@ -243,6 +250,15 @@ public class SerialService extends Service implements SerialListener {
                     cancelNotification();
                     disconnect();
                 }
+				MediaPlayer mp1 = MediaPlayer.create(this, R.raw.dingdong);
+				mp1.setOnPreparedListener(mp -> mp1.start());
+				mp1.setOnCompletionListener(mp -> mp1.release());
+				try {
+					mp1.prepare();
+				} catch (IOException exp) {
+					exp.printStackTrace();
+					e.printStackTrace();
+				}
             }
         }
     }
@@ -255,19 +271,14 @@ public class SerialService extends Service implements SerialListener {
             if (userName != null) {
                 String mention = "@" + userName;
                 if (rcvd.contains(mention)) {
+					MediaPlayer mp1 = MediaPlayer.create(this, R.raw.signal);
+					mp1.setOnPreparedListener(mp -> mp1.start());
+					mp1.setOnCompletionListener(mp -> mp1.release());
                     try {
-                        MediaPlayer mPlayer = MediaPlayer.create(this, R.raw.signal);
-
-                        try {
-                            mPlayer.prepare();
-                        } catch (IllegalStateException | IOException e) {
-                            // TODO Auto-generated catch block
+						mp1.prepare();
+					} catch (IOException e) {
                             e.printStackTrace();
                         }
-                        mPlayer.start();
-                    } catch (Exception exp) {
-                        exp.printStackTrace();
-                    }
                 }
             }
 
@@ -287,15 +298,18 @@ public class SerialService extends Service implements SerialListener {
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setWhen(System.currentTimeMillis());
 
+			notifManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 NotificationChannel nc = new NotificationChannel(Constants.NOTIFICATION_CHANNEL, "Background message", NotificationManager.IMPORTANCE_DEFAULT);
                 nc.setShowBadge(false);
                 nc.setLightColor(0xAAAAAA);
-                NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                nm.createNotificationChannel(nc);
-                nm.notify(15, builder.build());
+				notifManager.createNotificationChannel(nc);
+				msgNotification = builder.build();
+				notifManager.notify(15, msgNotification);
             } else {
-                builder.build().notify();
+				msgNotification = builder.build();
+				msgNotification.notify();
             }
         }
     }

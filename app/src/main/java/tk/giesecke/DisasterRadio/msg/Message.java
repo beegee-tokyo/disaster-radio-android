@@ -20,7 +20,7 @@ public class Message {
 		return text;
 	}
 
-	String getColor() { return this.memberData.getColor(); }
+	int getColor() { return this.memberData.getColor(); }
 
 	MemberData getMemberData() {
 		return memberData;

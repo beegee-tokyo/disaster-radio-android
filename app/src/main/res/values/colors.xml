@@ -4,4 +4,26 @@
     <color name="colorPrimaryDark">#0B28AF</color>
     <color name="colorAccent">#0B28AF</color>
 
+    <color name="device_me">#CE93D8</color>
+    <color name="device_ec">#F48FB1</color>
+    <color name="device_01">#80CBC4</color>
+    <color name="device_03">#A5D6A7</color>
+    <color name="device_05">#C5E1A5</color>
+    <color name="device_07">#E6EE9C</color>
+    <color name="device_09">#FFF59D</color>
+    <color name="device_11">#FFE082</color>
+    <color name="device_13">#FFCC80</color>
+    <color name="device_15">#FFAB91</color>
+    <color name="device_17">#80DEEA</color>
+    <color name="device_19">#81D4FA</color>
+    <color name="device_20">#4DB6AC</color>
+    <color name="device_18">#81C784</color>
+    <color name="device_16">#AED581</color>
+    <color name="device_14">#DCE775</color>
+    <color name="device_12">#FFF176</color>
+    <color name="device_10">#FFD54F</color>
+    <color name="device_08">#FFB74D</color>
+    <color name="device_06">#FF8A65</color>
+    <color name="device_04">#4DD0E1</color>
+    <color name="device_02">#4FC3F7</color>
 </resources>

@@ -37,7 +37,7 @@
 
     <string name="string_delete">Delete</string>
 
-    <!--Offline manager button text-->
-    <string name="download_button_text">Download</string>
+    <!--Notifications-->
+    <string name="reply_label">Reply</string>
 
 </resources>

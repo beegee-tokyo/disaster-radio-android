@@ -15,6 +15,7 @@
         android:layout_marginBottom="2dp"
         android:background="@android:drawable/button_onoff_indicator_on"
         android:elevation="2dp"
+        android:gravity="center"
         android:padding="5dp"
         android:scrollHorizontally="false"
         android:text="@string/my_app_name"

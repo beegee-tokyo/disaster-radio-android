@@ -175,12 +175,6 @@ public class DevicesFragment extends ListFragment {
 			case R.id.ble_scan_stop:
 				stopScan();
 				return true;
-			case R.id.offline_maps:
-				// Todo Let the user decide if he wants online maps or downloaded maps
-//				Fragment fragment = new OfflineMapmanager();
-//				Objects.requireNonNull(getFragmentManager()).beginTransaction().replace(R.id.fragment,
-//						fragment, "offline_maps").addToBackStack(null).commit();
-				return true;
 			case R.id.bt_settings:
 				Intent intent = new Intent();
 				intent.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
@@ -287,6 +281,7 @@ public class DevicesFragment extends ListFragment {
 		BluetoothDevice device = listItems.get(position - 1);
 		Bundle args = new Bundle();
 		args.putString("device", device.getAddress());
+		args.putString("name", device.getName());
 		Fragment fragment = new TerminalFragment();
 		fragment.setArguments(args);
 		Objects.requireNonNull(getFragmentManager()).beginTransaction().replace(R.id.fragment, fragment, "terminal").addToBackStack(null).commit();
