@@ -19,6 +19,13 @@
     <string name="devices_bt_settings">Bluetooth settings</string>
     <string name="devices_no_name">-unnamed-</string>
 
+    <string name="devices_scanning_message">&lt;scanning...&gt;</string>
+    <string name="devices_not_found_message">&lt;no bluetooth devices found&gt;</string>
+    <string name="devices_initializing_message">&lt;initializing...&gt;</string>
+    <string name="devices_not_supported_message">&lt;bluetooth LE not supported&gt;</string>
+    <string name="devices_bluetooth_disabled_message">&lt;bluetooth is disabled&gt;</string>
+    <string name="devices_use_scan_message">&lt;use SCAN to refresh devices&gt;</string>
+
     <string name="chat_joined">joined the channel</string>
     <string name="chat_leave">left the channel</string>
 
