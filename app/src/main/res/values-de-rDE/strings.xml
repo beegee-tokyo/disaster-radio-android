@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="my_app_name">DisasterRadio</string>
+    <string name="devices">DisasterRadio Knoten</string>
+    <string name="location_permission_title">Standortberechtigungen benötigt</string>
+    <string name="default_rcvd_name">DisasterRadio</string>
+    <string name="menu_about">Über</string>
+    <string name="devices_scan">SCANNEN</string>
+    <string name="devices_stop_scan">STOP</string>
+    <string name="devices_bt_settings">Bluetooth-Einstellungen</string>
+    <string name="devices_scanning_message">&lt;Scannen...&gt;</string>
+    <string name="devices_not_found_message">&lt;Keine Bluetoothgeräte gefunden&gt;</string>
+    <string name="chat_settings">Einstellungen</string>
+    <string name="string_delete">Löschen</string>
+    <string name="reply_label">Antworten</string>
+    <string name="chat_username_hint">Nutzernamen eingeben</string>
+    <string name="settings_username">Nutzernamen eingeben oder verändern</string>
+    <string name="chat_send_hint">Nachricht hier eingeben</string>
+    <string name="chat_connection_error">Verbindung verloren</string>
+    <string name="chat_connection_failed">Verbindung fehlgeschlagen</string>
+    <string name="chat_disconnected">Nicht verbunden</string>
+    <string name="chat_connected">Verbunden</string>
+    <string name="chat_leave">hat den Kanal verlassen</string>
+    <string name="chat_joined">ist dem Kanal beigetreten</string>
+    <string name="devices_initializing_message">&lt;Initialisieren...&gt;</string>
+    <string name="devices_not_supported_message">&lt;Bluetooth LE wird nicht unterstützt&gt;</string>
+    <string name="devices_bluetooth_disabled_message">&lt;Bluetooth ist deaktiviert&gt;</string>
+    <string name="settings_switch_ui">Zum WiFi-Interface wechseln</string>
+    <string name="devices_use_scan_message">&lt;Nutze SCANNEN, um nach neuen Geräten zu suchen&gt;</string>
+    <string name="devices_no_name">-unbenannt-</string>
+    <string name="pairing_request">Kopplung angefragt\n-> Koppeln Sie sich und verbinden Sie sich erneut.</string>
+    <string name="chat_clear">Leeren</string>
+    <string name="location_denied_title">Standortzugriff verweigert</string>
+    <string name="info_no_gps">Sowohl der GPS-Standort, als auch die netzwerkbasierte Ortung sind nicht verfügbar. Die Kartendaten basieren nicht auf Ihrer aktuellen Position.</string>
+    <string name="location_permission_message">Diese App verwendet Standortdaten, um nach Bluetooth LE-Geräten suchen zu können.\nIhr Standort wird außerdem mit anderen Nutzern über das DisasterRadio-Netzwerk geteilt.</string>
+    <string name="location_denied_message">Da der Zugriff auf Ihren Standort deaktiviert ist, kann diese App nicht nach Bluetooth LE-Geräten suchen.</string>
+    <string name="about_text">https://disaster.radio\n\nEin robustes Kommunikationsnetzwerk.\n\nDiese App verbindet sich über BLE mit nahe gelegenen LoRa-Knoten, welche DisasterRadio-Firmware verwenden.\n\ndisaster.radio ist ein kollaboratives Projekt zwischen Sudo Mesh und Secure Scuttlebutt mit zusätzlicher Unterstützung von der Internet Society und dem Institute For the Future\n\nSofern nicht anderweitig vermerkt, steht dieser Quellcode unter der GNU General Public License v3-Lizenz.</string>
+</resources>

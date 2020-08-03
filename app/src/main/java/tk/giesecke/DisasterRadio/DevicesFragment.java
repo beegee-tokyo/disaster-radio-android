@@ -113,7 +113,7 @@ public class DevicesFragment extends ListFragment {
 		setListAdapter(null);
 		View header = Objects.requireNonNull(getActivity()).getLayoutInflater().inflate(R.layout.device_list_header, null, false);
 		getListView().addHeaderView(header, null, false);
-		setEmptyText("initializing...");
+		setEmptyText(getString(R.string.devices_initializing_message));
 		((TextView) getListView().getEmptyView()).setTextSize(18);
 		setListAdapter(listAdapter);
 	}
@@ -136,16 +136,16 @@ public class DevicesFragment extends ListFragment {
 		super.onResume();
 		Objects.requireNonNull(getActivity()).registerReceiver(discoveryBroadcastReceiver, discoveryIntentFilter);
 		if (bluetoothAdapter == null) {
-			setEmptyText("<bluetooth LE not supported>");
+			setEmptyText(getString(R.string.devices_not_supported_message));
 		} else if (!bluetoothAdapter.isEnabled()) {
-			setEmptyText("<bluetooth is disabled>");
+			setEmptyText(getString(R.string.devices_bluetooth_disabled_message));
 			if (menu != null) {
 				listItems.clear();
 				listAdapter.notifyDataSetChanged();
 				menu.findItem(R.id.ble_scan).setEnabled(false);
 			}
 		} else {
-			setEmptyText("<use SCAN to refresh devices>");
+			setEmptyText(getString(R.string.devices_use_scan_message));
 			if (menu != null)
 				menu.findItem(R.id.ble_scan).setEnabled(true);
 		}
@@ -209,7 +209,7 @@ public class DevicesFragment extends ListFragment {
 
 		listItems.clear();
 		listAdapter.notifyDataSetChanged();
-		setEmptyText("<scanning...>");
+		setEmptyText(getString(R.string.devices_scanning_message));
 		menu.findItem(R.id.ble_scan).setVisible(false);
 		menu.findItem(R.id.ble_scan_stop).setVisible(true);
 		if (scanState == ScanState.LESCAN) {
@@ -255,7 +255,7 @@ public class DevicesFragment extends ListFragment {
 	private void stopScan() {
 		if (scanState == ScanState.NONE)
 			return;
-		setEmptyText("<no bluetooth devices found>");
+		setEmptyText(getString(R.string.devices_not_found_message));
 		if (menu != null) {
 			menu.findItem(R.id.ble_scan).setVisible(true);
 			menu.findItem(R.id.ble_scan_stop).setVisible(false);
